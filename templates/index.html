@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MicroBlog</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+
+</head>
+<body>
+    <header class="navbar">
+        <div class="brand">
+            <img src="/static/blogging.svg" alt="Logo" width="54px"/>
+            MicroBlog
+        </div>
+        <ul class="navigation">
+            <li class="navigation-item"><a class="navigation-link" href="#">Recent</a></li>
+            <li class="navigation-item"><a class="navigation-link" href="#">Calendar</a></li>
+        </ul>
+    </header>
+
+
+    <main class="main">
+        <section>
+            <h1>Add New Post</h1>
+            <form class="form" action="" method="POST">
+                <p class="form-input">
+                    <label class="form-label" for="post">Post contents :</label>
+                    <textarea name="content" id="post" cols="30" rows="10" class="form-textarea"></textarea>
+                </p>
+                <button class="form-submit" type="submit">submit</button>
+      
+            </form>
+        </section>
+
+        <section>
+            <h1>Recent Posts</h1>
+            {% for entry in entries %}
+            <article class="entry">
+                <div>
+                    <h2 class="entry-title">{{entry['content'] | truncate(25,true)}}</h2>
+                    <time class="entry-date"> • {{entry['date']}}</time>
+                    <a class="entry-delete" href="/delete/{{entry['id']}}">
+                    <img src="/static/delete.svg" width="20px" height="20px"/>
+                    </a>
+                </div>
+                <p class="entry-content">{{ entry['content'] }}</p>
+            </article>
+            {% endfor %}
+        </section>
+    </main>
+
+    <footer class="footer">
+
+        <div class="footer-content">
+            <section class="left">
+                <a href="" class="footer-item special">Made By Yassin Wael</a>
+                <a href="" class="footer-item">More Projects</a>
+            </section>
+            
+            <section class="right">
+                <a href="" class="footer-item">About</a>
+                <a href="" class="footer-item">How I Made This</a>
+            </section>
+        </div>
+    </footer>
+</body>
+</html>
