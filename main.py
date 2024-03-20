@@ -1,4 +1,5 @@
-from flask import Flask,render_template,request
+from bson import ObjectId
+from flask import Flask, redirect,render_template,request,url_for
 from pymongo import MongoClient
 import datetime
 from icecream import ic
@@ -9,11 +10,13 @@ load_dotenv()
 app = Flask(__name__)
 client = MongoClient(environ.get('MONGODB'))
 app.db = client["Microblog"] # makes a test database called "testdb"
-collection = app.db["entries"]
+collection = app.db.entries
 
 entries = []
 # 
 @app.route('/',methods=['GET','POST'])
+@app.route('/index',methods=['GET','POST'])
+
 def home():
     
     if request.method == "POST":
@@ -21,6 +24,9 @@ def home():
         formatted_date = datetime.datetime.today().strftime("%b %d, %I:%M %p")
         app.db["entries"].insert_one({"content":content,"date":formatted_date})
         ic("content inserted",request.method)
+        return redirect(url_for('home'))
+    
+
     entries = [
              {
         "content":entry['content'],
@@ -36,7 +42,12 @@ def home():
 
 
 
-@app.route()
+@app.route('/delete/<id>')
+def delete(id):
+    ic(id)
+    deleted = collection.delete_one({"_id": ObjectId(id)})
+    ic(deleted)
+    return redirect(request.referrer)
 
 
 

@@ -9,7 +9,6 @@ body {
     box-sizing: border-box;
     margin: 0;
     background-color: #323f43;
-    cursor: url("/static/blogging.svg"),auto;
 }
 a:visited {
     color: inherit;
@@ -138,9 +137,13 @@ img[alt='Logo'] {
     position: relative;
     top: 2px;
     left: 5px;
+    transition: all 0.5s ease;
+    cursor: url("/static/cursor.png"),auto;
 
 }
-
+.entry-delete img:hover{
+    transform: scale(1.2);
+}
 .footer {
     background-color: #323f43;
     padding: 40px 0;
