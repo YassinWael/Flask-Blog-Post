@@ -13,7 +13,7 @@ app.db = client["Microblog"] # makes a test database called "testdb"
 collection = app.db.entries
 
 entries = []
-# 
+# vercel
 @app.route('/',methods=['GET','POST'])
 @app.route('/index',methods=['GET','POST'])
 
