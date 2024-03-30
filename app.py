@@ -4,16 +4,18 @@ from pymongo import MongoClient
 import datetime
 from icecream import ic
 from dotenv import load_dotenv
+
 from os import environ
+
 load_dotenv()
 
 app = Flask(__name__)
 client = MongoClient(environ.get('MONGODB'))
-app.db = client["Microblog"] # makes a test database called "testdb"
+app.db = client["Microblog"] 
 collection = app.db.entries
 
 entries = []
-# vercel
+
 @app.route('/',methods=['GET','POST'])
 @app.route('/index',methods=['GET','POST'])
 
@@ -21,10 +23,14 @@ def home():
     
     if request.method == "POST":
         content = request.form['content']
-        formatted_date = datetime.datetime.today().strftime("%b %d, %I:%M %p")
-        app.db["entries"].insert_one({"content":content,"date":formatted_date})
-        ic("content inserted",request.method)
-        return redirect(url_for('home'))
+        if content:
+            formatted_date = datetime.datetime.today().strftime("%b %d, %I:%M %p")
+            app.db["entries"].insert_one({"content":content,"date":formatted_date})
+            ic("content inserted",request.method)
+            return redirect(url_for('home'))
+        else:
+            return redirect(url_for('home'))
+
     
 
     entries = [
@@ -52,4 +58,4 @@ def delete(id):
 
 
 
-app.run(debug=True)
+app.run(debug=True,port=8080)

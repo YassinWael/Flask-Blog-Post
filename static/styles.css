@@ -9,13 +9,19 @@ body {
     box-sizing: border-box;
     margin: 0;
     background-color: #323f43;
+    color:white;
+    font-family: 'roboto';
+    min-width: 100%;
+    height: auto;
+    overflow-x: hidden;
+
 }
 a:visited {
     color: inherit;
 }
 .navbar {
-    max-width: 640px;
-    margin :50px auto;
+    max-width: 620px;
+    margin :1.5em auto;
     padding:0 20px;
     display: flex;
     justify-content: space-between;
@@ -27,17 +33,23 @@ a:visited {
     align-items: center;
 }
 img[alt='Logo'] {
-    margin-right: 20px;
+    margin-right: 0.3em;
 }
 
 .navigation {
     list-style: none;
     display: flex;
+    justify-self: flex-start;
+    width: fit-content;
+    align-self: center;
+    flex-grow: 1;
+    flex-wrap: wrap;
+    /* margin-left: 20%; */
 
 }
 
 .navigation-link {
-    margin-left: 50px;
+    margin-left: 1.2em;
     text-decoration: none;
     color:#5c6b70;
     transition: color 0.2s ease;
@@ -51,7 +63,7 @@ img[alt='Logo'] {
 .main {
     max-width: 640px;
     margin: 0 auto;
-    padding:0 20px
+    padding:0 20px;
 }
 
 .form {
@@ -67,7 +79,7 @@ img[alt='Logo'] {
 
 .form-label {
     display: block;
-    margin: 10px;
+    margin: 8px;
     font-size: larger;
 }
 
@@ -85,23 +97,55 @@ img[alt='Logo'] {
 
 
 .form-submit {
-    background-color: #3cd0ff;
+    position: relative;
+    background-color: #232323;
     border: none;
     font-size: 18px;
-    font-weight: bold;
+    font-weight: 200 !important;
     color:white;
-    padding:5px 20px;
+    padding:10px 20px;
     border-radius: 20px;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.3s ease;
 }
-
+.form-submit::after {
+    content: "";
+    position: absolute;
+    border: 3.2px solid green;
+    width: 100%;
+    height: 100%;
+    border-radius: 20px;
+    top: 0;
+    left: 0;
+    animation: colors 5s linear infinite;
+    visibility: hidden;    
+}
+@keyframes colors {
+    0%, 10%, 30%, 50%, 70%, 85%, 100% {
+        border-color: #ff5252;
+    }
+    15% {
+        border-color: #ffa000;
+    }
+    40% {
+        border-color: #ffd740;
+    }
+    60% {
+        border-color: #4caf50;
+    }
+    90% {
+        border-color: #00bcd4;
+    }
+}
 .form-submit:hover {
-    box-shadow: 0px 0px 2px 3px black;
-    background-color: #5c90a1;
-    color: black;
+    transform: scale(1.2);
+    background-color: #333333;
+    box-shadow: 0 0 50px 10px #333333;
 }
+.form-submit:hover::after {
+    visibility: visible;
 
+}
 
 .entry {
     margin-top: 50px;
@@ -111,7 +155,8 @@ img[alt='Logo'] {
 
 .entry-title {
     display: inline;
-    font-size: 18px;
+    font-size: 20px;
+    color: #3cd0ff;
 }
 
 .entry-date {
@@ -120,7 +165,7 @@ img[alt='Logo'] {
 }
 
 .entry-content {
-    font-size: 16px;
+    font-size: 17px;
     line-height: 150%;
     justify-self: start;
     align-self: flex-end;
@@ -200,4 +245,16 @@ img[alt='Logo'] {
 .footer-item:hover::after {
     opacity: 1;
     width: 100%;
+}
+
+@media only screen and (max-width:768px) {
+    .main {
+        min-width: 100%;
+        overflow-x: hidden;
+
+    }
+    body {
+        overflow-x: hidden;
+    }
+
 }
