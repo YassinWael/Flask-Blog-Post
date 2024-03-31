@@ -22,6 +22,13 @@ a {
 a:visited {
     color: inherit;
 }
+
+#MicroBlog {
+    color: violet;
+    display: inline;
+    
+}
+
 .navbar {
     max-width: 620px;
     margin :1.5em auto;
@@ -34,6 +41,13 @@ a:visited {
 .brand {
     display: flex;
     align-items: center;
+}
+
+#brand-link {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: min-content;
 }
 img[alt='Logo'] {
     margin-right: 0.3em;
