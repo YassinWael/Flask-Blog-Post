@@ -1,0 +1,40 @@
+{% extends "index.html" %}
+
+{% block content %}
+<section>
+    <h1>Add New Post</h1>
+    <form class="form" action="" method="POST">
+        <p class="form-input">
+            <label class="form-label" for="post">Post contents :</label>
+            <textarea name="content" id="post" cols="30" rows="10" class="form-textarea"></textarea>
+        </p>
+        <button class="form-submit" type="submit">submit</button>
+
+    </form>
+</section>
+
+<section>
+    <h1>Recent Posts</h1>
+    {% for entry in entries %}
+    <article class="entry">
+        <div>
+            <h2 class="entry-title">{{entry['content'] | truncate(25,true)}}</h2>
+            <time class="entry-date"> • {{entry['date']}}</time>
+            <a class="entry-delete" href="/delete/{{entry['id']}}">
+            <img src="/static/delete.svg" width="25px" height="25px"/>
+            </a>
+
+            <a class="entry-pin" href="/pin/{{entry['id']}}">
+                <img src="/static/Pin.svg" width="25px" height="25px"/>
+                </a>
+
+            <a class="entry-pin" href="/edit/{{entry['id']}}">
+                <img src="/static/Pencil.svg" width="25px" height="25px"/>
+                </a>
+        </div>
+        <p class="entry-content">{{ entry['content'] | replace('\n','<br>') | safe }}</p>
+        {{ entry['pinned'] }}
+    </article>
+    {% endfor %}
+</section>
+{% endblock %}

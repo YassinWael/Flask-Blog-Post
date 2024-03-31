@@ -1,9 +1,9 @@
 from bson import ObjectId
-from flask import Flask, redirect,render_template,request,url_for
+from flask import Flask, redirect, render_template, request
 from pymongo import MongoClient
+from dotenv import load_dotenv
 import datetime
 from icecream import ic
-from dotenv import load_dotenv
 
 from os import environ
 
@@ -11,51 +11,64 @@ load_dotenv()
 
 app = Flask(__name__)
 client = MongoClient(environ.get('MONGODB'))
-app.db = client["Microblog"] 
-collection = app.db.entries
+db = client["Microblog"] 
+entries_collection = db.entries
 
-entries = []
-
-@app.route('/',methods=['GET','POST'])
-@app.route('/index',methods=['GET','POST'])
-
+@app.route('/', methods=['GET', 'POST'])
+@app.route('/index', methods=['GET', 'POST'])
 def home():
-    
     if request.method == "POST":
-        content = request.form['content']
+        content = request.form.get('content')
         if content:
             formatted_date = datetime.datetime.today().strftime("%b %d, %I:%M %p")
-            app.db["entries"].insert_one({"content":content,"date":formatted_date})
-            ic("content inserted",request.method)
-            return redirect(url_for('home'))
-        else:
-            return redirect(url_for('home'))
-
+            entries_collection.insert_one({"content": content, 
+                                           "date": formatted_date, 
+                                           "pinned":0})
+            ic("Content inserted", request.method)
+            return redirect('/')
     
-
-    entries = [
-             {
-        "content":entry['content'],
-        "date":entry['date'],
-        "id": entry['_id']
-             }
-            for entry in list(app.db.entries.find({}))
-        ]
-       
- 
-
-    return render_template('index.html',entries=entries)
+    entries = get_entries()
+    return render_template('home.html', entries=entries)
 
 
 
 @app.route('/delete/<id>')
 def delete(id):
-    ic(id)
-    deleted = collection.delete_one({"_id": ObjectId(id)})
+    deleted = entries_collection.delete_one({"_id": ObjectId(id)})
     ic(deleted)
-    return redirect(request.referrer)
+    return redirect('/')
 
+@app.route('/pin/<id>')
+def pin(id):
+    pinned = entries_collection.update_one({"_id":ObjectId(id)}, {"$inc":{"pinned":1}})
+    ic(pinned)
+    return redirect('/')
 
+@app.route('/edit/<id>')
+def edit(id):
+    entry = entries_collection.find_one({"_id":ObjectId(id)})
+    ic(entry)
+    return render_template('edit.html',entry=entry['content'])
+def get_entries():
+    """
+    Retrieves all entries from the entries collection and returns them in reverse chronological order.
 
+    Returns:
+        list: A list of dictionaries containing the 'content', 'date', and 'id' fields of each entry.
+    """
+    entries_cursor = entries_collection.find({})
+    entries = [
+        {
+            "content": entry['content'],
+            "date": entry['date'],
+            "id": entry['_id'],
+            "pinned":entry['pinned']
+        }
+        for entry in entries_cursor
+    ]
+    entries.sort(key=lambda x: x['pinned'])
+    ic(entries)
+    return entries[::-1]
 
-app.run(debug=True,port=8080)
+if __name__ == "__main__":
+    app.run(debug=True, port=8080)
