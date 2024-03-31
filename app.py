@@ -44,11 +44,18 @@ def pin(id):
     ic(pinned)
     return redirect('/')
 
-@app.route('/edit/<id>')
+@app.route('/edit/<id>',methods=["GET","POST"])
+
 def edit(id):
+
     entry = entries_collection.find_one({"_id":ObjectId(id)})
     ic(entry)
+    if request.method == "POST":
+        ic(request.form.get("content"))
+        entries_collection.find_one_and_update({"_id":ObjectId(id)},{"$set":{"content":request.form.get("content")}})
+        return redirect('/')
     return render_template('edit.html',entry=entry['content'])
+
 def get_entries():
     """
     Retrieves all entries from the entries collection and returns them in reverse chronological order.

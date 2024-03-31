@@ -1,5 +1,11 @@
 {% extends "index.html" %}
 
 {% block content %}
-    
+<form id="edit-form" class="form" action="" method="post">
+    <label for="form" class="form-label" style="text-align: left !important;">Editing:</label>
+    <textarea name="content" id="form" cols="30" rows="10" class="form-textarea">{{ entry }}</textarea>
+    <button class="form-update" type="submit">Update</button>
+
+</form>
+
 {% endblock %}
