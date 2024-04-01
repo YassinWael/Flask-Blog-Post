@@ -14,6 +14,8 @@ client = MongoClient(environ.get('MONGODB'))
 db = client["Microblog"] 
 entries_collection = db.entries
 
+
+
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/index', methods=['GET', 'POST'])
 def home():
@@ -38,10 +40,16 @@ def delete(id):
     ic(deleted)
     return redirect('/')
 
+
 @app.route('/pin/<id>')
 def pin(id):
     pinned = entries_collection.update_one({"_id":ObjectId(id)}, {"$inc":{"pinned":1}})
     ic(pinned)
+    return redirect('/')
+@app.route('/decrease-pin/<id>')
+def decrease_pin(id):
+    entries_collection.update_one({'_id':ObjectId(id)},{"$inc":{"pinned":-1}})
+  
     return redirect('/')
 
 @app.route('/edit/<id>',methods=["GET","POST"])

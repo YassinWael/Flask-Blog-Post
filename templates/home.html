@@ -20,21 +20,56 @@
         <div>
             <h2 class="entry-title">{{entry['content'] | truncate(25,true)}}</h2>
             <time class="entry-date"> • {{entry['date']}}</time>
-            <a class="entry-delete" href="/delete/{{entry['id']}}">
-            <img src="/static/delete.svg" width="25px" height="25px"/>
+
+            <a class="entry-action" href="/delete/{{entry['id']}}">
+                <img src="/static/delete.svg" width="25px" height="25px"/>
             </a>
 
-            <a class="entry-pin" href="/pin/{{entry['id']}}" style="color: transparent;">
+            <a class="entry-action" name="pin" href="/pin/{{entry['id']}}" style="color: transparent;">
                 <img src="/static/Pin.svg" width="25px" height="25px"/>
-                </a>
+            </a>
 
-            <a class="entry-pin" href="/edit/{{entry['id']}}" >
+            <a class="entry-action" href="/edit/{{entry['id']}}" >
                 <img src="/static/Pencil.svg" width="25px" height="25px"/>
-                </a>
+            </a>
         </div>
         <p class="entry-content">{{ entry['content'] | replace('\n','<br>') | safe }}</p>
         {{ entry['pinned'] }}
     </article>
     {% endfor %}
 </section>
+
+
+<script>
+    var pins = document.querySelectorAll('a[name="pin"]');
+    
+    document.addEventListener('keydown',function(event) {
+        console.log(event)
+        if (event.key == "Shift") {
+            event.preventDefault()
+            
+            pins.forEach(
+                function(pin) {
+                    pin.classList.toggle('colorChange') 
+                    if (!pin.href.includes('decrease')) {
+                        
+
+                        var newHref = pin.href.replace("pin","decrease-pin")
+                        console.log(`The new link is : ${newHref}`)
+                        pin.href = newHref
+                    }
+                    else {
+                        var newHref = pin.href.replace("decrease-pin","pin")
+                        console.log(`The new link is : ${newHref}`)
+                        pin.href = newHref
+
+                    }
+                }
+            )
+        }
+        
+    })
+
+
+</script>
 {% endblock %}

@@ -1,5 +1,6 @@
 html {
     font-family: Lato;
+    min-width: 100%;
 }
 *,::after {
     box-sizing: border-box;
@@ -115,7 +116,6 @@ img[alt='Logo'] {
 #edit-form {
     height: 100%;
     width: 100%;
-    border: 2px solid black;
 }
 
 
@@ -200,19 +200,18 @@ img[alt='Logo'] {
     color: gold;
     background: black;
 }
-.entry-delete {
+.entry-action {
     color:transparent
 }
-.entry-delete img {
+.entry-action img {
     position: relative;
-    margin-right: 8px;
+    margin-right: clamp(2px,0.2rem,5px);
     top: 2px;
     left: 5px;
     transition: all 0.5s ease;
-    cursor: url("/static/cursor.png"),auto;
 
 }
-.entry-delete img:hover{
+.entry-action img:hover{
     transform: scale(1.2);
 }
 
@@ -288,3 +287,10 @@ img[alt='Logo'] {
     }
 
 }
+
+.colorChange {
+    filter: hue-rotate(240deg);
+
+}
+
+/*  */
