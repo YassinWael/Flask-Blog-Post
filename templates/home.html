@@ -34,7 +34,7 @@
             </a>
         </div>
         <p class="entry-content">{{ entry['content'] | replace('\n','<br>') | safe }}</p>
-        {{ entry['pinned'] }}
+        📌 {{ entry['pinned'] }} 
     </article>
     {% endfor %}
 </section>
