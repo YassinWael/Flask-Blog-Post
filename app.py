@@ -4,7 +4,8 @@ from pymongo import MongoClient
 from dotenv import load_dotenv
 import datetime
 from icecream import ic
-
+from bleach import clean
+from bleach.sanitizer import ALLOWED_TAGS
 from os import environ
 
 load_dotenv()
@@ -14,6 +15,9 @@ client = MongoClient(environ.get('MONGODB'))
 db = client["Microblog"] 
 entries_collection = db.entries
 
+def sanitize(content):
+    safe_content = clean(content,tags=ALLOWED_TAGS)
+    return safe_content
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -21,6 +25,7 @@ entries_collection = db.entries
 def home():
     if request.method == "POST":
         content = request.form.get('content')
+        content = sanitize(content) # for security measures
         if content:
             formatted_date = datetime.datetime.today().strftime("%b %d, %I:%M %p")
             entries_collection.insert_one({"content": content, 
@@ -81,8 +86,9 @@ def get_entries():
         }
         for entry in entries_cursor
     ]
+
     entries.sort(key=lambda x: x['pinned'])
-    ic(entries)
+    print(entries[0]['content'])
     return entries[::-1]
 
 if __name__ == "__main__":
