@@ -22,7 +22,23 @@ a:visited {
     color: inherit;
 }
 a {
-    text-decoration: none !important;
+    text-decoration: none;
+    transition: all 0.2s ease;
+
+}
+
+.postlink {
+    color: #00ced1;
+    text-decoration: none;
+    transition: all 0.4s ease;
+}
+.postlink:visited{
+    color: #00ced1;
+}
+.postlink:hover {
+    text-decoration: underline;
+    text-shadow: 0px 7px 10px #00ced1;
+    
 
 }
 #MicroBlog {

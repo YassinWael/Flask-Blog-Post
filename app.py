@@ -4,8 +4,12 @@ from pymongo import MongoClient
 from dotenv import load_dotenv
 import datetime
 from icecream import ic
-from bleach import clean
+from bleach import clean,linkify
+from bleach.linkifier import LinkifyFilter
 from bleach.sanitizer import ALLOWED_TAGS
+from bleach import callbacks
+
+
 from os import environ
 
 load_dotenv()
@@ -15,9 +19,18 @@ client = MongoClient(environ.get('MONGODB'))
 db = client["Microblog"] 
 entries_collection = db.entries
 
+def custom_linkify(attrs,new=False):
+    attrs[(None,"class")] = 'postlink'
+    return attrs
+
+
 def sanitize(content):
-    safe_content = clean(content,tags=ALLOWED_TAGS)
-    return safe_content
+    safe_content = clean(content)
+   
+    linkified_content = linkify(
+        safe_content,
+        callbacks=[callbacks.nofollow,callbacks.target_blank,custom_linkify])
+    return linkified_content
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -86,10 +99,11 @@ def get_entries():
         }
         for entry in entries_cursor
     ]
-
-    entries.sort(key=lambda x: x['pinned'])
-    print(entries[0]['content'])
-    return entries[::-1]
+    if entries:
+        entries.sort(key=lambda x: x['pinned'])
+        print(entries[0]['content'])
+        return entries[::-1]
+    return entries
 
 if __name__ == "__main__":
     app.run(debug=True, port=8080)
