@@ -5,8 +5,7 @@ from dotenv import load_dotenv
 import datetime
 from icecream import ic
 from bleach import clean,linkify
-from bleach.linkifier import LinkifyFilter
-from bleach.sanitizer import ALLOWED_TAGS
+
 from bleach import callbacks
 
 
@@ -18,6 +17,8 @@ app = Flask(__name__)
 client = MongoClient(environ.get('MONGODB'))
 db = client["Microblog"] 
 entries_collection = db.entries
+deleted_collection = db.deleted
+
 
 def custom_linkify(attrs,new=False):
     attrs[(None,"class")] = 'postlink'
@@ -44,7 +45,7 @@ def home():
             entries_collection.insert_one({"content": content, 
                                            "date": formatted_date, 
                                            "pinned":0})
-            ic("Content inserted", request.method)
+          
             return redirect('/')
     
     entries = get_entries()
@@ -52,11 +53,32 @@ def home():
 
 
 
+@app.route('/deleted')
+def deleted():
+    return render_template('deleted.html',entries = get_deleted_entries())
+
+
+
+
+@app.route('/recover/<id>')
+def recover(id):
+    post = deleted_collection.find_one({"_id":ObjectId(id)})
+    deleted = deleted_collection.delete_one(post)
+    post["content"] = f"{post['content']} <br> ================RECOVERED==============="
+    entries_collection.insert_one(post)
+
+    
+    return redirect('/')
+
 @app.route('/delete/<id>')
 def delete(id):
-    deleted = entries_collection.delete_one({"_id": ObjectId(id)})
-    ic(deleted)
+    # adding the deleted post to the recently deleted collection
+    post = entries_collection.find_one({"_id":ObjectId(id)})
+    deleted_collection.insert_one(post)
+
+    deleted = entries_collection.delete_one({"_id":ObjectId(id)})
     return redirect('/')
+
 
 
 @app.route('/pin/<id>')
@@ -64,6 +86,7 @@ def pin(id):
     pinned = entries_collection.update_one({"_id":ObjectId(id)}, {"$inc":{"pinned":1}})
     ic(pinned)
     return redirect('/')
+
 @app.route('/decrease-pin/<id>')
 def decrease_pin(id):
     entries_collection.update_one({'_id':ObjectId(id)},{"$inc":{"pinned":-1}})
@@ -71,14 +94,13 @@ def decrease_pin(id):
     return redirect('/')
 
 @app.route('/edit/<id>',methods=["GET","POST"])
-
 def edit(id):
 
     entry = entries_collection.find_one({"_id":ObjectId(id)})
     ic(entry)
     if request.method == "POST":
         ic(request.form.get("content"))
-        entries_collection.find_one_and_update({"_id":ObjectId(id)},{"$set":{"content":request.form.get("content")}})
+        entries_collection.find_one_and_update({"_id":ObjectId(id)},{"$set":{"content":sanitize(request.form.get("content"))}})
         return redirect('/')
     return render_template('edit.html',entry=entry['content'])
 
@@ -105,5 +127,11 @@ def get_entries():
         return entries[::-1]
     return entries
 
+
+
+def get_deleted_entries():
+    entries_cursor = deleted_collection.find({})
+    return list(entries_cursor)
+get_deleted_entries()
 if __name__ == "__main__":
-    app.run(debug=True, port=8080)
+    app.run(debug=True, port=8080,host='0.0.0.0')

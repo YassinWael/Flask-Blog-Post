@@ -8,7 +8,7 @@
             <label class="form-label" for="post">Post contents :</label>
             <textarea name="content" id="post" cols="30" rows="10" class="form-textarea"></textarea>
         </p>
-        <button class="form-submit" type="submit">submit</button>
+        <button class="form-submit" type="submit" style="display: block;">submit</button>
 
     </form>
 </section>
@@ -16,12 +16,12 @@
 <section>
     <h1>Recent Posts</h1>
     {% for entry in entries %}
-    <article class="entry">
+    <article id="entry-{{entry['id']}}" class="entry">
         <div>
             <h2 class="entry-title">{{entry['content'] | truncate(25,true)}}</h2>
             <time class="entry-date"> • {{entry['date']}}</time>
 
-            <a class="entry-action" href="/delete/{{entry['id']}}">
+            <a class="entry-action delete" data-id="{{entry['id']}}" href="/delete/{{entry['id']}}">
                 <img src="/static/delete.svg" width="25px" height="25px"/>
             </a>
 
@@ -29,7 +29,7 @@
                 <img src="/static/Pin.svg" width="25px" height="25px"/>
             </a>
 
-            <a class="entry-action" href="/edit/{{entry['id']}}" >
+            <a class="entry-action " href="/edit/{{entry['id']}}" >
                 <img src="/static/Pencil.svg" width="25px" height="25px"/>
             </a>
         </div>
@@ -41,6 +41,26 @@
 
 
 <script>
+    document.querySelectorAll(".delete").forEach(button => {
+        
+        button.addEventListener("click",function(event){
+            event.preventDefault();
+            var button_id = button.dataset.id;
+            var entryId = `entry-${button_id}`;
+            var entry = document.getElementById(entryId);
+            entry.classList.add("animate__animated", "animate__zoomOutRight");
+
+            entry.addEventListener('animationend',function() {
+                window.location.href = `/delete/${button_id}`
+            })
+        })
+        
+        
+
+    })
+
+
+
     var pins = document.querySelectorAll('a[name="pin"]');
     
     document.addEventListener('keydown',function(event) {
