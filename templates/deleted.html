@@ -41,6 +41,9 @@
     var delCardId = `card-${delId}`;
     var delCard = document.getElementById(delCardId);
     delCard.classList.add("animate__animated", "animate__rotateOut");
+    delCard.addEventListener("animationend",function() {
+      window.location.href = `/permdelete/${delId}`
+    }) 
    
 
   })
