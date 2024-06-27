@@ -87,6 +87,10 @@ def delete(id):
 
     deleted = entries_collection.delete_one({"_id":ObjectId(id)})
     return redirect('/')
+@app.route('/permdelete/<id>')
+def perm_delete(id):
+    deleted = deleted_collection.delete_one({"_id":ObjectId(id)})
+    return redirect('/')
 
 
 

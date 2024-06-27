@@ -6,10 +6,16 @@
   {% for entry in entries %}
   <div class="card" id="card-{{entry['_id']}}">
     <p class="card-title">{{entry['content'] | truncate(20)}}</p>
+    <a href="/permdelete/{{entry['_id']}}" class="permdelete-btn" data-id="{{entry['_id']}}" style="display: block;" onclick="">  
+      <img src="/static/perm_delete.svg" alt="delete icon" style="top: 10px;" class="card-action" width="25px" height="25px">  
+    </a>
     <p class="card-content">{{entry['content'] | safe}}</p>
     <a href="/recover/{{entry['_id']}}"  class="recover-btn" data-id="{{entry['_id']}}" style="display: block;" onclick="">  
       <img src="/static/restore.svg" alt="restore icon" class="card-action" width="25px" height="25px">  
     </a>
+
+
+
     {% if entry['time_left'] == 1 %}
     <p class="time-left">{{ entry['time_left'] }} Day Left</p>
     {% else %}
@@ -26,6 +32,48 @@
 
 
 <script>
+
+ document.querySelectorAll(".permdelete-btn").forEach(button => {
+  button.addEventListener("click",function(event) {
+    event.preventDefault();
+    var delId = button.dataset.id;
+    console.log(delId);
+    var delCardId = `card-${delId}`;
+    var delCard = document.getElementById(delCardId);
+    delCard.classList.add("animate__animated", "animate__rotateOut");
+   
+
+  })
+ })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   document.querySelectorAll(".recover-btn").forEach(button => {
     button.addEventListener("click", function(event) {
       event.preventDefault();
