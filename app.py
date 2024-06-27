@@ -55,7 +55,15 @@ def home():
 
 @app.route('/deleted')
 def deleted():
-    return render_template('deleted.html',entries = get_deleted_entries())
+    all_entries =  get_deleted_entries() #everything in the deleted collection
+    entries = [entry for entry in all_entries if entry['time_left'] > 0] # entries that still have remaining time
+    entries_to_delete = [entry["_id"] for entry in all_entries if entry not in entries] #entries that should be permenantly deleted
+    for entry in entries_to_delete:
+        deleted_entry = deleted_collection.delete_one({"_id":entry})
+        ic(deleted_entry)
+
+  
+    return render_template('deleted.html',entries = entries)
 
 
 
@@ -74,6 +82,7 @@ def recover(id):
 def delete(id):
     # adding the deleted post to the recently deleted collection
     post = entries_collection.find_one({"_id":ObjectId(id)})
+    post["date"] = datetime.datetime.today().strftime("%b %d")
     deleted_collection.insert_one(post)
 
     deleted = entries_collection.delete_one({"_id":ObjectId(id)})
@@ -131,7 +140,22 @@ def get_entries():
 
 def get_deleted_entries():
     entries_cursor = deleted_collection.find({})
-    return list(entries_cursor)
+    today = datetime.datetime.today()
+
+    deleted_entries = [
+        {
+          '_id':entry['_id'],
+          'content':entry['content'],
+          'pinned':entry['pinned'],
+          'days_since_deletion':(today - (datetime.datetime.strptime((entry['date'].split(',')[0]),"%b %d")).replace(year=today.year)).days,
+          'time_left':3 - (today - (datetime.datetime.strptime((entry['date'].split(',')[0]),"%b %d")).replace(year=today.year)).days
+        }
+        
+        for entry in entries_cursor
+    ]
+   
+   
+    return deleted_entries
 get_deleted_entries()
 if __name__ == "__main__":
     app.run(debug=True, port=8080,host='0.0.0.0')

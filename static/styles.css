@@ -239,7 +239,6 @@ img[alt='Logo'] {
     min-height: max-content;
     padding: 10px 10px;
     height: 100%;
-    border: 2px solid black;
 }
 .card{
     background: #414856;
@@ -271,6 +270,15 @@ img[alt='Logo'] {
     position: absolute;
     bottom: 10px;
     right: 10px;
+}
+
+
+.time-left {
+    font-size: 0.65rem;
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    
 }
 
 .footer {

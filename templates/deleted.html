@@ -8,8 +8,18 @@
     <p class="card-title">{{entry['content'] | truncate(20)}}</p>
     <p class="card-content">{{entry['content'] | safe}}</p>
     <a href="/recover/{{entry['_id']}}"  class="recover-btn" data-id="{{entry['_id']}}" style="display: block;" onclick="">  
-      <img src="/static/restore.svg" alt="restore icon" class="card-action" width="25px" height="25px" id="test" onmouseenter="testFunction(this)">  
+      <img src="/static/restore.svg" alt="restore icon" class="card-action" width="25px" height="25px">  
     </a>
+    {% if entry['time_left'] == 1 %}
+    <p class="time-left">{{ entry['time_left'] }} Day Left</p>
+    {% else %}
+        <p class="time-left">{{ entry['time_left'] }} Days Left</p>
+    {% endif %}
+
+
+
+
+
   </div>
 {% endfor %}
 </div>
