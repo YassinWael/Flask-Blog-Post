@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 import datetime
 from icecream import ic
 from bleach import clean,linkify
-
+import re
 from bleach import callbacks
 
 
@@ -33,6 +33,11 @@ def sanitize(content):
         callbacks=[callbacks.nofollow,callbacks.target_blank,custom_linkify])
     return linkified_content
 
+
+def strongify(text):
+    return re.sub(r'\*\*(.*?)\*\*', r'<strong>\1</strong>', text)
+
+app.jinja_env.filters['strongify'] = strongify
 
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/index', methods=['GET', 'POST'])
@@ -81,11 +86,13 @@ def recover(id):
 @app.route('/delete/<id>')
 def delete(id):
     # adding the deleted post to the recently deleted collection
+    ic(f"Deleting object with id of: {id}")
     post = entries_collection.find_one({"_id":ObjectId(id)})
     post["date"] = datetime.datetime.today().strftime("%b %d")
     deleted_collection.insert_one(post)
 
     deleted = entries_collection.delete_one({"_id":ObjectId(id)})
+    ic(deleted)
     return redirect('/')
 @app.route('/permdelete/<id>')
 def perm_delete(id):

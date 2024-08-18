@@ -124,7 +124,9 @@ img[alt='Logo'] {
     font-size: 18px;
     padding: 12px 20px;
     border: none;
-    background-color: #5c6b70;
+    background: linear-gradient(153deg, rgb(95 166 190 / 81%) 10%, rgb(20 33 42) 90%);
+    opacity: 0.65;
+    box-shadow: 0 0 35px 15px rgba(0, 0, 0, 0.184);
     color: white;
     margin-bottom: 10px;
     

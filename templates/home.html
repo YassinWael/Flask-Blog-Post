@@ -14,7 +14,7 @@
 </section>
 
 <section>
-    <h1>Recent Posts</h1>
+    <h1 style="font-size: 2rem; margin-bottom:-10px; color:antiquewhite">Recent Posts</h1>
     {% for entry in entries %}
     <article id="entry-{{entry['id']}}" class="entry">
         <div>
@@ -33,7 +33,7 @@
                 <img src="/static/Pencil.svg" width="25px" height="25px"/>
             </a>
         </div>
-        <p class="entry-content">{{ entry['content'] | replace('\n','<br>') | safe }}</p>
+        <p class="entry-content">{{ entry['content'] | replace('\n','<br>') | strongify |  safe }}</p>
         📌 {{ entry['pinned'] }} 
     </article>
     {% endfor %}
@@ -41,6 +41,9 @@
 
 
 <script>
+    
+
+
     document.querySelectorAll(".delete").forEach(button => {
         
         button.addEventListener("click",function(event){
@@ -51,7 +54,21 @@
             entry.classList.add("animate__animated", "animate__zoomOutRight");
 
             entry.addEventListener('animationend',function() {
-                window.location.href = `/delete/${button_id}`
+                fetch(`/delete/${button_id}`)
+                .then(
+                    response => {
+                        if (response.ok) {
+                            entry.remove();
+                        
+                        }
+                        else {
+                            console.error("Failed to delete entry.")
+                        }
+                    }
+                )
+                .catch(
+                    error => console.error(`Error:${error}`)
+                )
             })
         })
         

@@ -2,6 +2,7 @@
 
 
 {% block content %}
+<a id="deleteAll" style="margin-left:75%"> Delete All </a>
 <div class="card-container">
   {% for entry in entries %}
   <div class="card" id="card-{{entry['_id']}}">
@@ -32,6 +33,39 @@
 
 
 <script>
+
+
+  document.getElementById("deleteAll").addEventListener("click",deleteAll)
+  function deleteAll() {
+    console.log("Deleting All...")
+    document.querySelectorAll(".card").forEach(card => {
+      var entryId = card.querySelector(".permdelete-btn")
+      fetch(`/permdelete/${entryId.dataset.id}`)
+      .then(
+        response => {
+          if (response.ok) {
+            card.remove();
+            console.log(`Successfully removed card.}`)
+          }
+          else {
+            console.log("Failed to remove card....")
+          }
+        }
+      
+      )
+      .catch(
+        error => {
+          console.error(error)
+        }
+      )
+    })
+  }
+
+
+
+
+
+
 
  document.querySelectorAll(".permdelete-btn").forEach(button => {
   button.addEventListener("click",function(event) {
