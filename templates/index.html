@@ -18,13 +18,18 @@
         </a>
         </div>
         <ul class="navigation">
-            <li class="navigation-item"><a class="navigation-link" href="/deleted">Recently Deleted</a></li>
+            <li class="navigation-item"><a class="navigation-link" href="/deleted">Deleted</a></li>
+            <li class="navigation-item"><a class="navigation-link" href="{{ url_for('home',visibility='private') }}">Private</a></li>
             
         </ul>
+        
     </header>
 
 
     <main class="main">
+        {% for message in get_flashed_messages() %}
+            <p>{{message}}</p>
+        {% endfor %}
         {% block content %}
         {% endblock %}
     </main>

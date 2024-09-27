@@ -1,5 +1,5 @@
 from bson import ObjectId
-from flask import Flask, redirect, render_template, request
+from flask import Flask, redirect, render_template, request,session,flash
 from pymongo import MongoClient
 from dotenv import load_dotenv
 import datetime
@@ -15,6 +15,7 @@ load_dotenv()
 
 app = Flask(__name__)
 client = MongoClient(environ.get('MONGODB'))
+app.secret_key = environ.get("SECRET_KEY")
 db = client["Microblog"] 
 entries_collection = db.entries
 deleted_collection = db.deleted
@@ -42,20 +43,48 @@ app.jinja_env.filters['strongify'] = strongify
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/index', methods=['GET', 'POST'])
 def home():
+    visibility = request.args.get("visibility","public")
+    ic(visibility)
     if request.method == "POST":
+        headers = dict(request.headers)
+        user_ip = headers['X-Forwarded-For'] if headers['Host'] == "flask-blog-post-production.up.railway.app" else request.remote_addr
+        user_agent = headers['User-Agent']
+
         content = request.form.get('content')
+        radio = request.form.get('radio')
+
         content = sanitize(content) # for security measures
         if content:
             formatted_date = datetime.datetime.today().strftime("%b %d, %I:%M %p")
+            device = {
+                "ip":user_ip,
+                "agent":user_agent
+            }
             entries_collection.insert_one({"content": content, 
-                                           "date": formatted_date, 
+                                           "date": formatted_date,
+                                           "visibility":radio,
+                                           "device":device,
                                            "pinned":0})
           
             return redirect('/')
-    
-    entries = get_entries()
+    if visibility == 'private' and not session.get('logged') == 'yes':
+        return redirect('/login')
+    entries = get_entries(visibility)
     return render_template('home.html', entries=entries)
 
+@app.route("/login",methods=['GET','POST'])
+def login():
+    if request.method == "POST":
+        password = request.form.get("content")
+        if password == "shesaidshesfromtheislands@_!":
+            session['logged'] = "yes"
+            entries = get_entries("private")
+            flash("Good job, you better not have cracked the password. 🙏🙏 ")
+            return render_template('home.html',entries = entries)
+        else:
+            flash("Wrong password lil bro, Try again.")
+
+    return render_template("login.html")
 
 
 @app.route('/deleted')
@@ -124,26 +153,31 @@ def edit(id):
         return redirect('/')
     return render_template('edit.html',entry=entry['content'])
 
-def get_entries():
+def get_entries(visibility="public"):
     """
     Retrieves all entries from the entries collection and returns them in reverse chronological order.
 
     Returns:
         list: A list of dictionaries containing the 'content', 'date', and 'id' fields of each entry.
     """
-    entries_cursor = entries_collection.find({})
+    ic(visibility)
+    if visibility == 'private':
+        flash("Private Posts only, hit the logo to go back to public.")
+    entries_cursor = entries_collection.find({"visibility":visibility})
     entries = [
         {
             "content": entry['content'],
             "date": entry['date'],
             "id": entry['_id'],
-            "pinned":entry['pinned']
+            "pinned":entry['pinned'],
+            "visibility":entry['visibility']
+            
         }
         for entry in entries_cursor
     ]
     if entries:
         entries.sort(key=lambda x: x['pinned'])
-        print(entries[0]['content'])
+        ic(entries)
         return entries[::-1]
     return entries
 

@@ -8,13 +8,24 @@
             <label class="form-label" for="post">Post contents :</label>
             <textarea name="content" id="post" cols="30" rows="10" class="form-textarea"></textarea>
         </p>
-        <button class="form-submit" type="submit" style="display: block;">submit</button>
+        <div class="container" style="display: flex;width:100%;justify-content:space-between; margin:10px 0px">
+        <div class="radio-buttons">
+            <label for="private-radio">Private
+            <input type="radio" name="radio" value="private" id="private-radio">
+            </label>
+            <label for="public-radio">Public
+                <input type="radio" name="radio" value="public" id="public-radio" checked>
+            </label>
+        </div>
+        <button class="form-submit" type="submit" >submit</button>
+
+        </div>
 
     </form>
 </section>
 
 <section>
-    <h1 style="font-size: 2rem; margin-bottom:-10px; color:antiquewhite">Recent Posts</h1>
+    <h1 style="font-size: 2rem; margin-bottom:-10px; color:antiquewhite; display:inline-block">Recent Posts</h1>
     {% for entry in entries %}
     <article id="entry-{{entry['id']}}" class="entry">
         <div>

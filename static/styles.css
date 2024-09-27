@@ -11,12 +11,30 @@ body {
     margin: 0;
     background-color: #323f43;
     color:white;
-    font-family: 'roboto';
+    font-family: 'Poppins';
     min-width: 100%;
     height: auto;
     overflow-x: hidden;
 
 }
+/* poppins-regular - latin */
+@font-face {
+    font-display: swap; 
+    font-family: 'Poppins';
+    font-style: normal;
+    font-weight: 400;
+    src: url('/static/fonts/poppins-v21-latin-regular.woff2') format('woff2'); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+  }
+  /* poppins-600italic - latin */
+  @font-face {
+    font-display: swap; 
+    font-family: 'Poppins';
+    font-style: italic;
+    font-weight: 600;
+    src: url('static/fonts/poppins-v21-latin-600italic.woff2') format('woff2'); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+  }
+
+
 
 a:visited {
     color: inherit;
@@ -88,6 +106,8 @@ img[alt='Logo'] {
     text-decoration: none;
     color:#5c6b70;
     transition: color 0.2s ease;
+    font-family: 'Poppins';
+
     
 }
 
@@ -106,6 +126,7 @@ img[alt='Logo'] {
     display: flex;
     flex-direction: column;
     align-items: flex-end;
+    position: relative;
 }
 
 .form-input {
@@ -121,14 +142,15 @@ img[alt='Logo'] {
 
 .form-textarea {
     width: inherit;
-    font-size: 18px;
+    font-size: 20px;
     padding: 12px 20px;
     border: none;
     background: linear-gradient(153deg, rgb(95 166 190 / 81%) 10%, rgb(20 33 42) 90%);
     opacity: 0.65;
     box-shadow: 0 0 35px 15px rgba(0, 0, 0, 0.184);
-    color: white;
+    color: rgba(0, 255, 255, 1);
     margin-bottom: 10px;
+    border-radius: 15px;
     
 }
 #edit-form {
@@ -171,6 +193,72 @@ img[alt='Logo'] {
     visibility: visible;
 
 }
+
+.radio-buttons {
+    display: flex;
+    justify-content: space-evenly;
+    align-self: flex-start;
+
+    position: relative;
+    bottom: 0;
+    font-size: 18px;
+    margin-bottom: 5px;
+    border: 2px solid rgb(95 166 190 / 81%);
+    padding: 11px 6px 11px 10px;
+    border-radius: 25px;
+    width: 40%
+}
+
+
+
+.radio-buttons::after {
+    content: "";
+    width: 5px;
+    height: 100%;
+    background-color: rgb(95, 166, 190);
+    position: absolute;
+    left: 45%;
+    top: 0;
+    margin: 0 10px;
+}
+
+
+
+
+.radio-buttons input {
+    display: none;
+}
+
+
+.radio-buttons label:has(input:checked):has(#public-radio)::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    background-color: rgba(95, 166, 190, 1);
+    width: 49%;
+    height: 100%;
+    border-top-right-radius: 25px;
+    border-bottom-right-radius: 25px;
+    z-index: -1;
+    box-shadow: 0 0 25px 15px rgba(95, 166, 190, .8);
+
+}
+
+.radio-buttons label:has(input:checked):has(#private-radio)::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: rgba(95, 166, 190, 1);
+    width: 52%;
+    height: 100%;
+    border-top-left-radius: 25px;
+    border-bottom-left-radius: 25px;
+    z-index: -1;
+    box-shadow: 0 0 25px 15px rgba(95, 166, 190, .8);
+}
+
 @keyframes colors {
     0%, 10%, 30%, 50%, 70%, 85%, 100% {
         border-color: #ff5252;
