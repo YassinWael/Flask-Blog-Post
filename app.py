@@ -76,7 +76,7 @@ def home():
 def login():
     if request.method == "POST":
         password = request.form.get("content")
-        if password == "shesaidshesfromtheislands@_!":
+        if password == "cr@zy":
             session['logged'] = "yes"
             entries = get_entries("private")
             flash("Good job, you better not have cracked the password. 🙏🙏 ")
